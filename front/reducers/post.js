@@ -37,6 +37,7 @@ const ADD_DUMMY = 'ADD_DUMMY';
 export const initialState = {
   mainPosts:[
     {
+      id:1,
       content:'',
       createdAt:new Date(),
       User:{
@@ -45,25 +46,39 @@ export const initialState = {
       },
       content:"welcome",
       img:'',
+      Comments:[],
     },
   ], //state <-- 이거를 어떻게 바꿀지 정하는게 reducer
   imagePath:[],
   addPostErrorReason:'',
   isAddingPost:false,
   postAdded:false,
+  isAddingComment:false,
+  commentAdded:false,
+  addCommentErrorReason:''
 }
 
 const dummyPost =   {
     content:'',
     createdAt:new Date(),
     User:{
-      id:2,
+      id:1,
       nickname:"Suzy",
     },
     content:"i am a model",
+    Comments:[],
     img:'',
   }
 
+const dummyComment = {
+  id:1,
+  User:{
+    id:1,
+    nickname:"류진"
+  },
+  createdAt:new Date(),
+  content:"I am Ryugin"
+}
 
 const addPost = {
   type:ADD_POST_REQUEST,
@@ -105,6 +120,34 @@ const reducer = (state = initialState, action) => {
         ...state,
         isAddingPost:false,
         addPostErrorReason:action.error,
+      }
+    }
+    case ADD_COMMENT_REQUEST:{
+      return {
+        ...state,
+        isAddingComment:true,
+        addCommentErrorReason:'',
+        commentAdded:false,
+      }
+    }
+    case ADD_COMMENT_SUCCESS:{
+      const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
+      const post = state.mainPosts[postIndex];
+      const Comments = [...post.Comments, dummyComment];
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = {...post, Comments};
+      return {
+        ...state,
+        isAddingComment:false,
+        mainPosts,
+        commentAdded:true,
+      }
+    }
+    case ADD_COMMENT_FAILURE:{
+      return {
+        ...state,
+        isAddingComment:false,
+        addCommentErrorReason:action.error,
       }
     }
     case ADD_DUMMY:{

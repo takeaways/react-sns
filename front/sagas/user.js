@@ -95,13 +95,10 @@ function* logout(){
     })
   }
 }
-
-
 //이벤트 등록
 export default function* userSaga(){
   yield all([
     fork(watchLogin),
     fork(watchSignUp),
-    fork(watchLogOut),
   ])
 }
