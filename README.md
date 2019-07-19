@@ -95,3 +95,46 @@ yield* 는 뒤에 나오는 값을 iterable로 본다
     call : 동기 , fork : 비동기
   </code>
 </pre>
+
+14. back 시작
+<pre>
+  <code>
+    npm i express axios bcrypt cookie-parser express-session cors helmet hpp morgan multer passport passport-local dotenv sequelize
+
+    npm i -D nodemon
+    npm i -g sequelize-cli
+    nodemon.js
+      {
+        "watch":[
+          "index.js"
+          "routes",
+          "config",
+          "passport",
+          "modules",
+          "nodemon.json"
+        ],
+        "exec":"node index.js",
+        "ext":"js json"
+      }
+  </code>
+</pre>
+
+15. HTTP 요청 주소 체계 이해하기 80/443
+<pre>
+  <code>
+    프론트(요청)<-------------------->(응답)백엔드
+    REST
+      GET
+      POST
+      PUT : 전체수정
+      PATCH: 부분수정
+      DELETE
+  </code>
+</pre>
+
+16. Sequelize ERD
+<pre>
+  <code>
+    sequelize init
+  </code>
+</pre>
