@@ -36,18 +36,7 @@ export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 const ADD_DUMMY = 'ADD_DUMMY';
 export const initialState = {
   mainPosts:[
-    {
-      id:1,
-      content:'',
-      createdAt:new Date(),
-      User:{
-        id:1,
-        nickname:"GeonilJang",
-      },
-      content:"welcome",
-      img:'',
-      Comments:[],
-    },
+
   ], //state <-- 이거를 어떻게 바꿀지 정하는게 reducer
   imagePath:[],
   addPostErrorReason:'',
@@ -56,43 +45,6 @@ export const initialState = {
   isAddingComment:false,
   commentAdded:false,
   addCommentErrorReason:''
-}
-
-const dummyPost =   {
-    content:'',
-    createdAt:new Date(),
-    User:{
-      id:1,
-      nickname:"Suzy",
-    },
-    content:"i am a model",
-    Comments:[],
-    img:'',
-  }
-
-const dummyComment = {
-  id:1,
-  User:{
-    id:1,
-    nickname:"류진"
-  },
-  createdAt:new Date(),
-  content:"I am Ryugin"
-}
-
-const addPost = {
-  type:ADD_POST_REQUEST,
-}
-
-const addDummy = {
-  type:ADD_DUMMY,
-  data:{
-    content:'Hello',
-    UserId:1,
-    User:{
-      nickname:"GeonilJang"
-    }
-  }
 }
 
 
@@ -111,7 +63,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         isAddingPost:false,
-        mainPosts:[dummyPost, ...state.mainPosts],
+        mainPosts:[action.data, ...state.mainPosts],
         postAdded:true,
       }
     }
@@ -133,14 +85,14 @@ const reducer = (state = initialState, action) => {
     case ADD_COMMENT_SUCCESS:{
       const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
       const post = state.mainPosts[postIndex];
-      const Comments = [...post.Comments, dummyComment];
+      const Comments = [...post.Comments, action.data.comment];
       const mainPosts = [...state.mainPosts];
       mainPosts[postIndex] = {...post, Comments};
       return {
         ...state,
-        isAddingComment:false,
         mainPosts,
-        commentAdded:true,
+        isAddingComment:false,
+        commentAdded:true
       }
     }
     case ADD_COMMENT_FAILURE:{
@@ -150,10 +102,38 @@ const reducer = (state = initialState, action) => {
         addCommentErrorReason:action.error,
       }
     }
-    case ADD_DUMMY:{
+    case LOAD_COMMENTS_SUCCESS:{
+      const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
+      const post = state.mainPosts[postIndex];
+      const Comments = action.data.comments;
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = {...post, Comments};
       return {
         ...state,
-        mainPosts:[dummyPost, ...state.mainPosts],
+        mainPosts,
+      }
+    }
+    case LOAD_USER_POSTS_REQUEST:
+    case LOAD_MAIN_POSTS_REQUEST:
+    case LOAD_HASH_POSTS_REQUEST:{
+      return {
+        ...state,
+        mainPosts:[],
+      }
+    }
+    case LOAD_USER_POSTS_SUCCESS:
+    case LOAD_MAIN_POSTS_SUCCESS:
+    case LOAD_HASH_POSTS_SUCCESS:{
+      return {
+        ...state,
+        mainPosts:action.data,
+      }
+    }
+    case LOAD_USER_POSTS_FAILURE:
+    case LOAD_MAIN_POSTS_FAILURE:
+    case LOAD_HASH_POSTS_FAILURE:{
+      return {
+        ...state,
       }
     }
     default:{

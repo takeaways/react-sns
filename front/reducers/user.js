@@ -27,7 +27,6 @@ export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 
 
 export const initialState = {
-  isLoggedIn:false,
   isLoggingOut:false,
   isLoggingIn:false,
   logInErrorReason:'',
@@ -38,16 +37,7 @@ export const initialState = {
   me:null,
   followingList:[],
   followerList:[],
-  userInfo:null
-}
-
-const dummy = {
-  nickname:"GEONIL",
-  Post:[],
-  Followings:[],
-  Followers:[],
-  signUpData:{},
-  id:1
+  userInfo:null,
 }
 
 
@@ -81,7 +71,6 @@ export default (state = initialState, action) => {
     case LOG_IN_SUCCESS:{
       return {
         ...state,
-        isLoggedIn:true,
         isLoggingIn:false,
         me:action.data,
       }
@@ -89,7 +78,6 @@ export default (state = initialState, action) => {
     case LOG_IN_FAILURE:{
       return {
          ...state,
-       isLoggedIn:false,
        isLoggingIn:false,
        logInErrorReason:'실패야 일단은',
        me:null
@@ -99,40 +87,65 @@ export default (state = initialState, action) => {
       return {
         ...state,
         logOutErrorReason:'',
+        isLoggingOut:true,
       }
     }
     case LOG_OUT_SUCCESS:{
       return {
         ...state,
-        isLoggedIn:false,
+        isLoggingOut:false,
         me:null,
       }
     }
     case LOG_OUT_FAILURE:{
       return {
         ...state,
-        logOutErrorReason:action.data
+        isLoggingOut:false,
+        logOutErrorReason:action.error
       }
     }
     case SIGN_UP_REQUEST:{
       return {
         ...state,
         isSigningUp:true,
-        signedUp:false
       }
     }
     case SIGN_UP_SUCCESS:{
       return {
         ...state,
         isSigningUp:false,
-        signedUp:true
+        signedUp:true,
       }
     }
     case SIGN_UP_FAILURE:{
       return {
         ...state,
         isSigningUp:false,
+        signedUp:true,
         signUpErrorReason:action.data,
+      }
+    }
+    case LOAD_USER_REQUEST:{
+      return {
+        ...state,
+        signedUp:false,
+      }
+    }
+    case LOAD_USER_SUCCESS:{
+      if(action.me){
+        return {
+          ...state,
+          me:action.data,
+        }
+      }
+      return{
+        ...state,
+        userInfo:action.data,
+      }
+    }
+    case LOAD_USER_FAILURE:{
+      return {
+        ...state,
       }
     }
     default:{

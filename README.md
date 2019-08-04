@@ -99,7 +99,7 @@ yield* 는 뒤에 나오는 값을 iterable로 본다
 14. back 시작
 <pre>
   <code>
-    npm i express axios bcrypt cookie-parser express-session cors helmet hpp morgan multer passport passport-local dotenv sequelize
+    npm i express axios bcrypt cookie-parser express-session cors helmet hpp morgan multer passport mysql2 passport-local dotenv sequelize
 
     npm i -D nodemon
     npm i -g sequelize-cli
@@ -132,9 +132,38 @@ yield* 는 뒤에 나오는 값을 iterable로 본다
   </code>
 </pre>
 
-16. Sequelize ERD
+16. Sequelize ERD[관계도]
 <pre>
   <code>
     sequelize init
+
+    테이블 만들기!!
+      models 내부에 설정 값을 확인 바랍니다.
+      -> 다대다 관계에서는 중간에 테이블이 하나 더 생성됩니다. ,{through:'중간테이블'}
+
+      User -> users 로 테이블이 생성됩니다.
   </code>
 </pre>
+
+17. API는 다른 서비스가 내 서비스의 기능을 실행할 수있게 열어둔 창구
+
+18. 회원가입 라우터 만들어 보기
+<pre>
+  <code>
+    Post /user -> 데이터 필요
+     요청에 헤더(header)요청에 본분(body)같이 보낼 수 있음, 본문에다가 데이터를 널어서 보낸다.
+    응답(response)
+  </code>
+</pre>
+
+19. passport 프론트에 쿠키 / 서버에 세션 주기위해서
+jwt가 무조건 좋은게 아니다.. 단점이 더 많다
+<pre>
+  <code>
+    passport -> express session 하단에 존재 해야합니다.
+  </code>
+</pre>
+
+20. next의 pages 라우터 만으로는 데이터 터리 한정정 이기 때문에 express를 연결해서 사용한다
+
+21. 서버 사이드 렌더링과 라우팅

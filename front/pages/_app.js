@@ -9,11 +9,11 @@ import reducer from '../reducers';
 import rootSaga from '../sagas';
 
 //공통 적으로 들어가는!!
-const Main = ({Component, store}) => {
+const Main = ({Component, store, pageProps}) => {
   return (
     <Provider store={store}>
       <AppLayout>
-        <Component/>
+        <Component {...pageProps}/>
       </AppLayout>
     </Provider>
   );
@@ -22,7 +22,18 @@ const Main = ({Component, store}) => {
 Main.propTypes = {
   Component: PropTypes.elementType,
   store:PropTypes.object,
+  pageProps:PropTypes.object,
 }
+
+Main.getInitialProps = async (context) => {
+  const {ctx, Component} = context;
+  let pageProps = {};
+  if(context.Component.getInitialProps){
+    pageProps = await context.Component.getInitialProps(ctx);
+  }
+  return {pageProps};
+};
+
 
 const configureStore = (initialState, options)=>{
 

@@ -1,7 +1,7 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import {Form, Input, Checkbox, Button, Modal} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
-import {SIGN_UP_REQUEST} from '../reducers/user';
+import {SIGN_UP_REQUEST, LOAD_USER_REQUEST} from '../reducers/user';
 import Router from 'next/router';
 
   //customeHook
@@ -14,8 +14,9 @@ import Router from 'next/router';
   }
 
 const Signup = () => {
+
   const dispatch = useDispatch();
-  const {isSigningUp, me} = useSelector(state => state.user);
+  const {isSigningUp, me, signedUp} = useSelector(state => state.user);
 
   useEffect(()=>{
     if(me){
@@ -23,6 +24,7 @@ const Signup = () => {
       Router.push('/');
     }
   },[me && me.id]);
+
 
   //Modal
   const [visible, setVisible] = useState(false);
@@ -37,9 +39,6 @@ const Signup = () => {
     setTerm(false);
     setVisible(false);
   },[])
-
-
-
 
   const [id, onChangeId] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -61,8 +60,23 @@ const Signup = () => {
     }
     dispatch({
       type:SIGN_UP_REQUEST,
+      data:{
+        userId : id,
+        password,
+        nickname
+      }
     });
-  },[passwordCheck,password,term]);
+  },[id, nickname, passwordCheck,password,term]);
+
+  useEffect(()=>{
+    if(signedUp){
+      alert('회원가입 성공')
+      Router.push('/');
+    }
+    dispatch({
+      type:LOAD_USER_REQUEST
+    })
+  },[!signedUp]);
 
   const onChangePasswordCheck = useCallback((e) => {
     setPasswordError(false);

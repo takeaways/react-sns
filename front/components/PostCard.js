@@ -1,11 +1,13 @@
 import React,{useState, useEffect, useCallback} from 'react';
 import {Input, Form, Button, Card, Icon, Avatar,List,Comment} from 'antd'
+import Link from 'next/link'
 import PropTypes from 'prop-types';
 import {useSelector, useDispatch} from 'react-redux';
-import {ADD_COMMENT_REQUEST} from '../reducers/post';
+import {ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST} from '../reducers/post';
 
 
 const PostCard = ({post}) => {
+
   const {me} = useSelector(state => state.user);
   const {commentAdded,isAddingComment} = useSelector(state => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -15,11 +17,16 @@ const PostCard = ({post}) => {
 
   const onToggleComment = useCallback(() => {
     setCommentFormOpened(prev => !prev);
-  },[]);
+    if(!commentFormOpened){
+      dispatch({
+        type:LOAD_COMMENTS_REQUEST,
+        data:post.id
+      })
+    }
+  },[commentFormOpened]);
 
   const onChangeCommentText = useCallback((e)=>{
     setCommentText(e.target.value);
-      console.log(commentText);
   },[commentText]);
 
   const onSubmitComment = useCallback((e)=>{
@@ -31,18 +38,20 @@ const PostCard = ({post}) => {
       type:ADD_COMMENT_REQUEST,
       data:{
         postId:post.id,
+        comment:commentText
       }
     })
-  },[me && me.id])
+  },[me && me.id, commentText])
+  
 
   useEffect(()=>{
     setCommentText('');
   },[commentAdded === true])
 
+
   return (
     <div>
       <Card
-        key={+post.createdAt}
         cover={post.img && <img alt="example" src={post.img}/>}
         actions={[
           <Icon type="retweet" key="retweet"/>,
@@ -53,9 +62,14 @@ const PostCard = ({post}) => {
         extra={<Button>Follow</Button>}
       >
         <Card.Meta
-          avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
+          avatar={<Link as={`/user/${post.User.id}`} href={ {pathname:'/user', query:{id:post.User.id}} }><a><Avatar>{post.User.nickname[0]}</Avatar></a></Link>}
           title={post.User.nickname}
-          description={post.content}
+          description={<div>{post.content.split(/(#[^\s]+)/g).map(h=>{
+            if(h.match(/#[^\s]+/g)) return (
+              <Link as={`/hashtag/${h.slice(1)}`} href={{pathname:'/hashtag', query:{tag:h.slice(1)}}} key={h}><a>{h}</a></Link>
+            )
+            return h
+          })}</div>}
         />
       </Card>
       {commentFormOpened && (
@@ -74,9 +88,8 @@ const PostCard = ({post}) => {
               <li>
                 <Comment
                   author={item.User.nickname}
-                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  avatar={<Link as={`/user/${item.User.id}`} href={ {pathname:'/user', query:{id: item.User.id} } }><a><Avatar>{item.User.nickname[0]}</Avatar></a></Link>}
                   content={item.content}
-                  datetime={item.createdAt.toString()}
                 />
               </li>
             )}
